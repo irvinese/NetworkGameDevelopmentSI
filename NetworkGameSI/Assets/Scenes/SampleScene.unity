@@ -662,7 +662,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 132.99997, y: -89.432556}
+  m_AnchoredPosition: {x: 531, y: -207}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &601316426
@@ -1386,8 +1386,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 10, y: 2.220446e-16, z: 10}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 9.975336, y: 0.28253102, z: 10}
+  m_Center: {x: 0.012331963, y: -0.14126551, z: 0}
 --- !u!64 &992637029
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2006,7 +2006,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60ee3dc90a58b9948800f329e44a9ff3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerPrefab: {fileID: 390117235510336574, guid: 6636af1898d9cd94fab6d83413b37987, type: 3}
+  _playerPrefab: {fileID: 390117235510336574, guid: 2ad51b441239100418d2d0e35511454a, type: 3}
   _spawnPoints:
   - {fileID: 1219097003}
   - {fileID: 1939924398}
@@ -2388,7 +2388,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1587135710}
   - component: {fileID: 1587135709}
-  - component: {fileID: 1587135708}
+  - component: {fileID: 1587135711}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -2396,26 +2396,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1587135708
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1587135707}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SendPointerHoverToParent: 1
-  m_HorizontalAxis: Horizontal
-  m_VerticalAxis: Vertical
-  m_SubmitButton: Submit
-  m_CancelButton: Cancel
-  m_InputActionsPerSecond: 10
-  m_RepeatDelay: 0.5
-  m_ForceModuleActive: 0
 --- !u!114 &1587135709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2446,6 +2426,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1587135711
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1587135707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: 6dbe5354889eb9f4183f95af62e45764, type: 3}
+  m_PointAction: {fileID: 505979445080935141, guid: 6dbe5354889eb9f4183f95af62e45764, type: 3}
+  m_MoveAction: {fileID: 3009325431390005882, guid: 6dbe5354889eb9f4183f95af62e45764, type: 3}
+  m_SubmitAction: {fileID: 8210194321508342642, guid: 6dbe5354889eb9f4183f95af62e45764, type: 3}
+  m_CancelAction: {fileID: 3948982647043542451, guid: 6dbe5354889eb9f4183f95af62e45764, type: 3}
+  m_LeftClickAction: {fileID: -7820225244529011992, guid: 6dbe5354889eb9f4183f95af62e45764, type: 3}
+  m_MiddleClickAction: {fileID: 6095900326942931765, guid: 6dbe5354889eb9f4183f95af62e45764, type: 3}
+  m_RightClickAction: {fileID: -7540946711773094842, guid: 6dbe5354889eb9f4183f95af62e45764, type: 3}
+  m_ScrollWheelAction: {fileID: 4252675649990891103, guid: 6dbe5354889eb9f4183f95af62e45764, type: 3}
+  m_TrackedDevicePositionAction: {fileID: 2619837759860694525, guid: 6dbe5354889eb9f4183f95af62e45764, type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 3353876778264582462, guid: 6dbe5354889eb9f4183f95af62e45764, type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
+  m_CursorLockBehavior: 0
 --- !u!1 &1602606330
 GameObject:
   m_ObjectHideFlags: 0
