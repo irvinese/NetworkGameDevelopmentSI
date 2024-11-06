@@ -342,6 +342,7 @@ GameObject:
   - component: {fileID: 7666240619903048084}
   - component: {fileID: 6045682801283353941}
   - component: {fileID: 3508061453442587370}
+  - component: {fileID: 16618566032824573}
   m_Layer: 5
   m_Name: PlayerInfoPanel
   m_TagString: Untagged
@@ -369,7 +370,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 46.814987}
+  m_AnchoredPosition: {x: -229, y: 138}
   m_SizeDelta: {x: 0, y: -93.630005}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7666240619903048084
@@ -420,6 +421,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d9a1aad3885fbc443aa4d4830b3a865b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerText: {fileID: 2154563589842932469}
+  _kickButton: {fileID: 4919215022709034207}
+  _ReadyStatusImg: {fileID: 1800100242919595775}
+  _PlayerColorImg: {fileID: 2785511386880867560}
+--- !u!114 &16618566032824573
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7261685980767052507}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8b711a4774d32644b2006c13b443087, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _playerText: {fileID: 2154563589842932469}

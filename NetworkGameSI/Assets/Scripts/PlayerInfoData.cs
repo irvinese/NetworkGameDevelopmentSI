@@ -21,23 +21,26 @@ public struct PlayerInfoData : INetworkSerializable, IEquatable<PlayerInfoData>
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-    {
-        if(serializer.IsReader)
-        {
-            var reader = serializer.GetFastBufferReader();
-            reader.ReadValueSafe(out _clientId);
-            reader.ReadValueSafe(out _name);
-            reader.ReadValueSafe(out _isPlayerReady);
-            reader.ReadValueSafe(out _colorId);
-        }else{
-            var writer = serializer.GetFastBufferWriter();
-            writer.WriteValueSafe(_clientId);
-            writer.WriteValueSafe(_name);
-            writer.WriteValueSafe(_isPlayerReady);
-            writer.WriteValueSafe(_colorId);
+{
+    serializer.SerializeValue(ref _clientId);
+    serializer.SerializeValue(ref _name);
+    serializer.SerializeValue(ref _isPlayerReady);
 
-        }
+    byte r = (byte)(_colorId.r * 255);
+    byte g = (byte)(_colorId.g * 255);
+    byte b = (byte)(_colorId.b * 255);
+    byte a = (byte)(_colorId.a * 255);
+    serializer.SerializeValue(ref r);
+    serializer.SerializeValue(ref g);
+    serializer.SerializeValue(ref b);
+    serializer.SerializeValue(ref a);
+
+    if (serializer.IsReader)
+    {
+        _colorId = new Color32(r, g, b, a);
     }
+}
+
 
     public bool Equals(PlayerInfoData other)
     {

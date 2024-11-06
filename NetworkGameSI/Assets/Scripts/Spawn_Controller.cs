@@ -15,11 +15,10 @@ public class Spawn_Controller : NetworkBehaviour
     private Transform[] _spawnPoints;
 
     [SerializeField]
-    NetworkVariable<int> _playerCount = new NetworkVariable<int>(value: 0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<int> _playerCount = new NetworkVariable<int>(value: 0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
     [SerializeField]
     private TMP_Text _countTxt;
-    private int newValue;
 
     public override void OnNetworkSpawn()
     {
@@ -54,26 +53,12 @@ public class Spawn_Controller : NetworkBehaviour
         UpdateCountTextClientRpc(newValue);
     }
 
-/* old
-    [ClientRpc]
-    private void UpdateCountTextClientRpc()
+ 
+    [Rpc(target: SendTo.Everyone)]
+    private void UpdateCountTextClientRpc(int newValue)
     {
-
+        UpdateCountText(newValue);
     }
-
-    [ServerRpc]
-    private void SomeServerRpc()
-    {
-
-    }
-    */
-
-[Rpc(target:SendTo.Everyone)]
-private void UpdateCountTextClientRpc(int newValue)
-{
-    Debug.Log(message: "Message From Client RPC");
-    UpdateCountText(newValue);
-}
 
 
     private void UpdateCountText(int newValue)
@@ -88,20 +73,25 @@ private void UpdateCountTextClientRpc(int newValue)
             _playerCount.Value++;
         }
     }
-
+    
     public void SpawnAllPlayers()
     {
-        if(!IsServer) return;
+        if (!IsServer) return;
 
-        int spawnNum = 0;
-        foreach (ulong clientId in NetworkManager.ConnectedClientsIds)
+    int spawnNum = 0;
+    foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+    {
+
+        NetworkObject playerObject = Instantiate(_playerPrefab, _spawnPoints[spawnNum].position, _spawnPoints[spawnNum].rotation);
+        
+        if (playerObject != null)
         {
-            NetworkObject spawnedPlayerNO = NetworkManager.Instantiate(_playerPrefab, _spawnPoints[spawnNum].position, _spawnPoints[spawnNum].rotation);
-
-           spawnedPlayerNO.SpawnAsPlayerObject(clientId);
-           
-            spawnNum++;
+            playerObject.SpawnAsPlayerObject(clientId);
         }
+        
+        spawnNum++;
     }
+    }
+
 
 }

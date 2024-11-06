@@ -186,7 +186,7 @@ MonoBehaviour:
   _myAnimator: {fileID: 2778403586543940014}
   _ownerAnimator: {fileID: 1581232423676842094}
   _jumpHeight: 1
-  _gravity: 10
+  _gravity: 0
 --- !u!114 &-594034748495421327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -471,7 +471,7 @@ CapsuleCollider:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
+  m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5000001

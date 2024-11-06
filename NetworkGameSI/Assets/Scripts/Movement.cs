@@ -64,19 +64,6 @@ public class Movement : NetworkBehaviour
         float movespeed = .03f;
         transform.position += moveDirection * (movespeed + Time.deltaTime);
 
-        // Apply gravity
-            if (!_characterController.isGrounded)
-            {
-                _velocity.y += _gravity * Time.deltaTime;
-            }
-            else if (_velocity.y < 0)
-            {
-                _velocity.y = -2f;
-            }
-
-            // Apply the velocity (for jump and gravity)
-            _characterController.Move(_velocity * Time.deltaTime);
-
     }
 }
 
