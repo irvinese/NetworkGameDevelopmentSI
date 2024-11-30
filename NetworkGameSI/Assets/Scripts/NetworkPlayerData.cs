@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 using System.Xml.Serialization;
 using System;
+using App.Resource.Scripts;
 
 public class NetworkPlayerData : NetworkBehaviour
 {
@@ -47,6 +48,7 @@ public class NetworkPlayerData : NetworkBehaviour
         if (eventData.EventType == ConnectionEvent.ClientConnected)
         {
             CreateNewClientData(eventData.ClientId);
+            AddPlayersRpc(eventData.ClientId);
         }
 
         if(eventData.EventType == ConnectionEvent.ClientDisconnected)
@@ -123,4 +125,14 @@ public class NetworkPlayerData : NetworkBehaviour
 
     Debug.Log("Readiness Update");
    }
+
+   [Rpc(target: SendTo.Server)]
+    private void AddPlayersRpc(ulong clientID, RpcParams rpcParams = default)
+    {
+        Game_Scripts gameScripts = FindObjectOfType<Game_Scripts>();
+        if (gameScripts == null) return;
+
+        // Add player to the _currentPlayers list
+        gameScripts.AddPlayerToList(clientID);
+    }
 }

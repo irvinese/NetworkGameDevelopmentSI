@@ -1,107 +1,142 @@
 using System.Collections;
 using System.Collections.Generic;
+using App.Resource.Scripts.obj;
 using Assets.Scripts;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
 
-[RequireComponent(typeof(CharacterController))]
-public class ServerPlayerMovment : NetworkBehaviour
+
+[RequireComponent(typeof(Rigidbody))]
+public class ServerPlayerMovement : NetworkBehaviour
 {
     [SerializeField] private Animator _myAnimator;
     [SerializeField] private NetworkAnimator _myNetworkAnimator;
-   [SerializeField] public float _pSpeed;
-   [SerializeField] private Transform _pTransform;
-   [SerializeField] private float _pGravity = -2;
-   private Vector3 _velocity;
-
-    public CharacterController _CC;
+    [SerializeField] public float _pSpeed = 5f;
+    [SerializeField] private float _jumpForce = 5f;
+    [SerializeField] private float _gravityMultiplier = 2f;
+    [SerializeField] private Bullet_Spawner _bulletSpawner;
+    
+    private Rigidbody _rigidbody;
     private PlayerInputAction _playerInput;
+    private Vector3 _moveDirection = Vector3.zero;
+    private bool _isGrounded;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-
-        if(_myAnimator == null)
+        // Fetch references if not set in the Inspector
+        if (_myAnimator == null)
         {
-            _myAnimator = gameObject.GetComponent<Animator>();
+            _myAnimator = GetComponent<Animator>();
         }
 
-        if(_myNetworkAnimator == null)
+        if (_myNetworkAnimator == null)
         {
-            _myNetworkAnimator = gameObject.GetComponent<NetworkAnimator>();
+            _myNetworkAnimator = GetComponent<NetworkAnimator>();
         }
 
+        if (_bulletSpawner == null)
+        {
+            Debug.LogError("BulletSpawner is not assigned.");
+            enabled = false;
+            return;
+        }
+
+        _rigidbody = GetComponent<Rigidbody>();
+        if (_rigidbody == null)
+        {
+            Debug.LogError("Rigidbody not found on the GameObject.");
+            enabled = false;
+            return;
+        }
+
+        // Enable player input
         _playerInput = new PlayerInputAction();
         _playerInput.Enable();
-        
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    private void FixedUpdate()
     {
-
-        if(!IsOwner) return;
+        if (!IsOwner) return;
 
         Vector2 moveInput = _playerInput.Player.Move.ReadValue<Vector2>();
 
-        bool IsJumping = _playerInput.Player.Jumping.triggered;
-        bool IsPunching = _playerInput.Player.Punching.triggered;
-        bool IsRunning = _playerInput.Player.Running.triggered;
+        bool isJumping = _playerInput.Player.Jumping.triggered;
+        bool isPunching = _playerInput.Player.Punching.triggered;
+        bool isRunning = _playerInput.Player.Running.IsPressed();
 
         if (IsServer)
         {
-            Movement(moveInput, IsJumping, IsPunching, IsRunning);
-        }else if (IsClient)
+            Movement(moveInput, isJumping, isPunching, isRunning);
+        }
+        else if (IsClient)
         {
-            MoveServerRPC(moveInput, IsJumping, IsPunching, IsRunning);
+            MoveServerRPC(moveInput, isJumping, isPunching, isRunning);
         }
 
-
-
-        
+        if (isPunching)
+        {
+            _bulletSpawner.FireProjectileRpc();
+        }
     }
 
-    private void Movement(Vector2 _input, bool IsJumping, bool IsPunching, bool IsRunning)
-{
-    
-    Vector3 _moveDirection = (_input.x * _pTransform.right + _input.y * _pTransform.forward);
-
-    _myAnimator.SetBool("IsWalking", _input.x != 0 || _input.y != 0);
-    if(IsJumping){ _myNetworkAnimator.SetTrigger("JumpTrigger");}
-    if(IsPunching){ _myNetworkAnimator.SetTrigger("PunchTrigger");}
-    _myAnimator.SetBool("IsRunning", IsRunning);
-    
-    if(IsRunning)
+    private void Movement(Vector2 input, bool isJumping, bool isPunching, bool isRunning)
     {
-        _CC.Move(_moveDirection * (_pSpeed * 1.3f) * Time.deltaTime);
-    }else{
-        _CC.Move(_moveDirection * _pSpeed * Time.deltaTime);
+        // Calculate movement direction
+        _moveDirection = new Vector3(input.x, 0f, input.y).normalized;
+
+        // Set animation states
+        _myAnimator.SetBool("IsWalking", _moveDirection.magnitude > 0);
+        _myAnimator.SetBool("IsRunning", isRunning);
+
+        if (isJumping)
+        {
+            _myNetworkAnimator.SetTrigger("JumpTrigger");
+        }
+
+        if (isPunching)
+        {
+            _myNetworkAnimator.SetTrigger("PunchTrigger");
+        }
+
+        // Update facing direction if moving
+        if (_moveDirection != Vector3.zero)
+        {
+            transform.forward = _moveDirection;
+        }
+
+        // Apply movement
+        float speed = isRunning ? _pSpeed * 1.3f : _pSpeed;
+        Vector3 velocity = _moveDirection * speed;
+        velocity.y = _rigidbody.velocity.y; // Preserve vertical velocity
+        _rigidbody.velocity = velocity;
+
+        // Handle jumping
+        if (isJumping && _isGrounded)
+        {
+            _rigidbody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+            _isGrounded = false; // Temporarily disable grounded state
+        }
+
+        // Simulate gravity
+        if (!_isGrounded)
+        {
+            _rigidbody.AddForce(Vector3.down * _gravityMultiplier, ForceMode.Acceleration);
+        }
     }
 
-    // Handle jumping
-    if (IsJumping && _CC.isGrounded)
+    private void OnCollisionEnter(Collision collision)
     {
-        _velocity.y = Mathf.Sqrt(2 * -_pGravity * 100.5f);
-    }
-   
-
-    //extra code to add gravity
-    if(!_CC.isGrounded)
-    {
-        _velocity.y += _pGravity * Time.deltaTime;
-    }else
-    {
-        _velocity.y = -2f;
+        // Re-enable grounded state when colliding with ground
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            _isGrounded = true;
+        }
     }
 
-    _CC.Move(_velocity * Time.deltaTime);
-}
-
-
-    [Rpc(target:SendTo.Server)]
-    private void MoveServerRPC(Vector2 _input, bool IsJumping, bool IsPunching, bool IsRunning)
+    [Rpc(target: SendTo.Server)]
+    private void MoveServerRPC(Vector2 input, bool isJumping, bool isPunching, bool isRunning)
     {
-        Movement(_input, IsJumping, IsPunching, IsRunning);
+        Movement(input, isJumping, isPunching, isRunning);
     }
 }

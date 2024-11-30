@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using App.Resource.Scripts.obj;
 using Unity.Netcode;
 using UnityEngine;
 using Vector3 = UnityEngine.Vector3;
@@ -17,6 +18,9 @@ public class Movement : NetworkBehaviour
     [SerializeField] private float _gravity = -9.81f;
     private Vector3 _velocity;
     private CharacterController _characterController;
+    [SerializeField] private Bullet_Spawner _bulletSpawner;
+     Vector3 _moveDirection = new Vector3(x:0, y:0, z:0);
+     private PlayerInputAction _playerInput;
 
     private void Awake()
     {
@@ -35,6 +39,8 @@ public class Movement : NetworkBehaviour
     {
 
         if(!IsOwner) return;
+
+        bool IsPunching = _playerInput.Player.Punching.triggered;
 
         Vector3 moveDirection = new Vector3(0, 0, 0);
         if(Input.GetKey(KeyCode.W)) moveDirection.z = +1f;
@@ -64,7 +70,20 @@ public class Movement : NetworkBehaviour
         float movespeed = .03f;
         transform.position += moveDirection * (movespeed + Time.deltaTime);
 
+        if (IsPunching)
+        {
+            _bulletSpawner.FireProjectileRpc();
+        }
+
     }
+
+    private void MovementServer(UnityEngine.Vector2 _input, bool IsJumping, bool IsPunching, bool IsRunning)
+            {
+                _moveDirection = new Vector3(_input.x, y: 0f, z: _input.y);
+
+                       // Move character
+    
+            }
 }
 
 }
